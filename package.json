@@ -4,23 +4,24 @@
   "description": "trying out nodejs+socketio",
   "repository": {
     "type": "git",
-    "url":  "https://github.com/joshuasnowball/nodejs-csclient.git"
+    "url": "https://github.com/joshuasnowball/nodejs-csclient.git"
   },
   "authors": [
     "joshuasnowball <hello@samuelcousin.com>"
   ],
   "license": "MIT",
-    "ignore": [
-      "**/.*",
-      "node_modules",
-      "bower_components",
-      "test",
-      "tests"
-    ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
   "main": "app.js",
   "dependencies": {
     "express": "^4.10.2",
     "gulp": "^3.9.0",
+    "gulp-copy": "0.0.2",
     "gulp-less": "^3.0.3",
     "gulp-livereload": "^3.8.0",
     "gulp-notify": "^2.2.0",

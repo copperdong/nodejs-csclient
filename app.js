@@ -20,19 +20,22 @@ io.on('connection', function(socket){ // Listening to events
 		console.log('user disconnected')
 	})
 	socket.on('send_msg', function(msg) {
-		chatscriptSocket = net.createConnection(chatscriptConfig, function(){
-		payload = 'guest'+'\x00'+chatscriptBot+'\x00'+msg+'\x00'
-		chatscriptSocket.write(payload)
-		// console.log('send_msg')
+		var chatscriptSocket = net.createConnection(chatscriptConfig, function(){
+			payload = 'guest'+'\x00'+chatscriptBot+'\x00'+msg+'\x00'
+			chatscriptSocket.write(payload)
+			// console.log('send_msg')
+		})
 		chatscriptSocket.on('data', function(data) {
 			console.log(data.toString());
-			io.emit('send_msg', data.toString());
-			// chatscriptSocket.end();
-		});
+			io.emit('send_msg', data.toString()); // FROM SERVER
+		})
 		chatscriptSocket.on('end', function() {
 			// console.log('disconnected from server');
-		});
-		});
+		})
+		chatscriptSocket.on('error', function(err) {
+			console.log('error from server ' + err +' '+ chatscriptSocket.address()[1]);
+		})
+
 	})
 })
 

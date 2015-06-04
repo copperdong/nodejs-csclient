@@ -1,0 +1,9 @@
+body {
+  margin: 0;
+}
+button {
+  font-weight: bold;
+}
+#window {
+  background: rgba(128, 0, 128, 0.2);
+}

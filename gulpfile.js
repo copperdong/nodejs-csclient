@@ -1,11 +1,11 @@
-var gulp      = require('gulp')
-var watch     = require('gulp-watch')
-var less      = require('gulp-less')
-var path      = require('path')
-var notify    = require('gulp-notify')
+var gulp       = require('gulp')
+var watch      = require('gulp-watch')
+var less       = require('gulp-less')
+var path       = require('path')
+var notify     = require('gulp-notify')
 var livereload = require('gulp-livereload')
 
-//LESS
+//  LESS
 gulp.task('less', function () {
   gulp.src('public/css/less/style.less')
     .pipe(less({ paths: [ path.join(__dirname, 'less', 'includes') ]
@@ -20,19 +20,19 @@ gulp.task('less', function () {
   .pipe(livereload());
 });
 
-// HTML 
+// HTML
 gulp.task('html', function() {
   return gulp.src([ 'public/index.html' ])
   .pipe(livereload());
 });
 
-// JS 
+// JS
 gulp.task('js', function() {
   return gulp.src([ 'js/default.js' ])
   .pipe(livereload());
 });
 
-//Watch
+//  Watch
 gulp.task('watch', function () {
     livereload.listen()
     gulp.watch(['public/js/default.js'], ['js']);
@@ -40,7 +40,7 @@ gulp.task('watch', function () {
     gulp.watch('public/index.html', ['html'])
 });
 
-//Build
+//  Build
 gulp.task('build', function () {
   gulp.src('less/style.less')
   .pipe(gulp.dest('./public/css/'))
