@@ -22,8 +22,8 @@ io.on('connection', function(socket){ // Listening to events
 	socket.on('send_msg', function(msg) {
 		var chatscriptSocket = net.createConnection(chatscriptConfig, function(){
 			payload = 'guest'+'\x00'+chatscriptBot+'\x00'+msg+'\x00'
-			chatscriptSocket.write(payload)
-			// console.log('send_msg')
+			// chatscriptSocket.write(payload)
+			console.log('send_msg')
 		})
 		chatscriptSocket.on('data', function(data) {
 			console.log(data.toString());

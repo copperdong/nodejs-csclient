@@ -28,14 +28,14 @@ gulp.task('html', function() {
 
 // JS
 gulp.task('js', function() {
-  return gulp.src([ 'js/default.js' ])
+  return gulp.src([ 'public/js/*.js' ])
   .pipe(livereload());
 });
 
 //  Watch
 gulp.task('watch', function () {
     livereload.listen()
-    gulp.watch(['public/js/default.js'], ['js']);
+    gulp.watch(['public/js/*.js'], ['js']);
     gulp.watch(['public/css/less/**/*'], ['less']);
     gulp.watch('public/index.html', ['html'])
 });
