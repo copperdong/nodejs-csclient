@@ -62,13 +62,14 @@ $(document).ready(function() {
 
     // Add characters to input string
     function keyPress(char) {
-        console.log(char)
+        // console.log(char)
         textInput.text += char
     }
 
     function returnPress() {
         // console.log('return')
-        socket.emit('send_msg', textInput)
+        console.log('send_msg: ', textInput.text)
+        socket.emit('send_msg', textInput.text)
         textInput.text = ""
     }    
 
