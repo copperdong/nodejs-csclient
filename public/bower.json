@@ -1,0 +1,26 @@
+{
+  "name": "nodejs-csclient",
+  "version": "0.0.1",
+  "homepage": "https://github.com/joshuasnowball/nodejs-csclient",
+  "authors": [
+    "jsnowball <hello@samuelcousin.com>"
+  ],
+  "description": "nodejs client for chatscript",
+  "main": "app.js",
+  "install": {
+    "path": "public/js/vendors"
+  },
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "phaser": "~2.3.0",
+    "jquery": "~2.1.4",
+    "socket.io-client": "~1.3.5"
+  }
+}

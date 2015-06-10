@@ -1,7 +1,8 @@
 var gulp       = require('gulp')
-var watch      = require('gulp-watch')
-var less       = require('gulp-less')
 var path       = require('path')
+var watch      = require('gulp-watch')
+var nodemon    = require('gulp-nodemon')
+var less       = require('gulp-less')
 var notify     = require('gulp-notify')
 var livereload = require('gulp-livereload')
 
@@ -28,14 +29,22 @@ gulp.task('html', function() {
 
 // JS
 gulp.task('js', function() {
-  return gulp.src([ 'public/js/*.js' ])
+  return gulp.src([ 'public/js/**/*.js' ])
   .pipe(livereload());
 });
 
 //  Watch
 gulp.task('watch', function () {
     livereload.listen()
-    gulp.watch(['public/js/*.js'], ['js']);
+    // nodemon restart app
+    nodemon({
+    script: 'app.js',
+    ext: 'js'
+    }).on('restart', function(){
+    gulp.src('app.js')
+    .pipe(livereload())
+    })
+    gulp.watch(['public/js/**/*'], ['js']);
     gulp.watch(['public/css/less/**/*'], ['less']);
     gulp.watch('public/index.html', ['html'])
 });
