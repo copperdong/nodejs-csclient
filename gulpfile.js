@@ -1,10 +1,10 @@
-var gulp       = require('gulp')
-var path       = require('path')
-var watch      = require('gulp-watch')
-var nodemon    = require('gulp-nodemon')
-var less       = require('gulp-less')
-var notify     = require('gulp-notify')
-var livereload = require('gulp-livereload')
+var gulp       = require('gulp');
+var path       = require('path');
+var watch      = require('gulp-watch');
+var nodemon    = require('gulp-nodemon');
+var less       = require('gulp-less');
+var notify     = require('gulp-notify');
+var livereload = require('gulp-livereload');
 
 //  LESS
 gulp.task('less', function () {
@@ -35,24 +35,24 @@ gulp.task('js', function() {
 
 //  Watch
 gulp.task('watch', function () {
-    livereload.listen()
+    livereload.listen();
     // nodemon restart app
     nodemon({
     script: 'app.js',
     ext: 'js'
     }).on('restart', function(){
     gulp.src('app.js')
-    .pipe(livereload())
-    })
+    .pipe(livereload());
+    });
     gulp.watch(['public/js/**/*'], ['js']);
     gulp.watch(['public/css/less/**/*'], ['less']);
-    gulp.watch('public/index.html', ['html'])
+    gulp.watch('public/index.html', ['html']);
 });
 
 //  Build
 gulp.task('build', function () {
   gulp.src('less/style.less')
-  .pipe(gulp.dest('./public/css/'))
+  .pipe(gulp.dest('./public/css/'));
 });
 
 gulp.task('default', ['watch']);

@@ -1,51 +1,74 @@
-var express = require('express')
-var app     = express()
-var http    = require('http').Server(app)
-var io      = require('socket.io')(http)
-var net     = require('net')
+// Modules
+var express = require('express');
+var app = express();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+var net = require('net');
 
+// Variables
+app.use(express.static(__dirname + '/public'));
+var chatscriptBot = "heckler";
+var appport = process.env.PORT || 3000;
 var chatscriptConfig = {
 	port: 1337,
-	host: '167.160.163.209',
-	allowHalfOpen: true
+	host: '167.160.163.209'
+};
+var chatScriptOnline = true;
+
+// Routes
+app.get('/', function(req, res) {
+	res.sendFile(__dirname + '/index.html');
+});
+
+// Test the connection and if 200, reset 
+function initiateChatscript(config) {
+	var csTest = net.createConnection(config, function() {
+		console.log('chatscript is alive');
+		csTest.write(csTest.localAddress + '\x00' + chatscriptBot + '\x00' + ':reset' + '\x00');
+		csTest.on('error', function(err) {
+			chatScriptOnline = false;
+			console.log('chatscript is dead');
+			io.emit('send_msg', 'sorry but cs is closed :('); // to browser
+		});
+		csTest.on('data', function(data) {
+			io.emit('send_msg', data.toString()); // to browser
+		});
+		csTest.destroy();
+	});
 }
-var chatscriptBot = "heckler"
 
-app.use(express.static(__dirname + '/public'))
-
-app.get('/', function(req, res) { // Serve '/index.html' to all GET request to /
-	res.sendFile(__dirname + '/index.html')
-})
-
-io.on('connection', function(socket) { // Listening to events
-	console.log('user connected')
-	socket.on('disconnect', function() {
-		// console.log('user disconnected')
-	})
-	socket.on('send_msg', function(msg) {
+// Sockets events
+io.on('connection', function(browserSocket) {
+	initiateChatscript(chatscriptConfig);
+	console.log('browserSocket opened');
+	browserSocket.on('send_msg', function(msg) {
 		var chatscriptSocket = net.createConnection(chatscriptConfig, function() {
-				payload = 'guest' + '\x00' + chatscriptBot + '\x00' + msg + '\x00'
-				chatscriptSocket.write(payload)
-					// console.log('send_msg')
-			})
-			// on receive data from chatscriptSocket
-		chatscriptSocket.on('data', function(data) {
-				console.log(data.toString());
-				io.emit('send_msg', data.toString()); // FROM SERVER
-			})
-			// on end from chatscriptSocket
-		chatscriptSocket.on('end', function() {
-				// console.log('disconnected from server');
-			})
-			// on error from chatscriptSocket
-		chatscriptSocket.on('error', function(err) {
-			console.log('error from server ' + err + ' ' + chatscriptSocket.address()[1]);
-		})
+			console.log('chatscriptSocket opened');
+			chatscriptSocket.on('data', function(data) {
+				console.log('chatscriptSocket received data');
+				io.emit('send_msg', data.toString()); // to browser
+				chatscriptSocket.destroy();
+			});
+			chatscriptSocket.on('end', function() {
+				console.log('chatscriptSocket end');
+			});
+			chatscriptSocket.on('error', function(err) {
+				console.log('chatscriptSocket error: ' + err + ' ' + chatscriptSocket.address()[1]);
+			});
+			chatscriptSocket.on('close', function() {
+				console.log('chatscriptSocket close');
+			});
+		});
+		console.log('browserSocket send_msg');
+		payload = chatscriptSocket.localAddress + '\x00' + chatscriptBot + '\x00' + msg + '\x00';
+		chatscriptSocket.write(payload);
+	});
+	browserSocket.on('disconnect', function() {
+		console.log('browserSocket disconnect');
+	});
+});
 
-	})
-})
-
-// start http server on port 3000
-http.listen(3000, function() {
-	console.log('listening on *:3000')
-})
+// Start http server on port 3000
+http.listen(appport, function() {
+	console.log('listening on', appport);
+});
