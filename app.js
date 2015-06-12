@@ -4,6 +4,7 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var net = require('net');
+var morgan = require('morgan')
 
 // Variables
 app.use(express.static(__dirname + '/public'));
@@ -20,14 +21,17 @@ app.get('/', function(req, res) {
 	res.sendFile(__dirname + '/index.html');
 });
 
+// Logging
+app.use(morgan('combined'))
+
 // Test the connection and if 200, reset 
 function initiateChatscript(config) {
 	var csTest = net.createConnection(config, function() {
-		console.log('chatscript is alive');
+		// console.log('chatscript is alive');
 		csTest.write(csTest.localAddress + '\x00' + chatscriptBot + '\x00' + ':reset' + '\x00');
 		csTest.on('error', function(err) {
 			chatScriptOnline = false;
-			console.log('chatscript is dead');
+			// console.log('chatscript is dead');
 			io.emit('send_msg', 'sorry but cs is closed :('); // to browser
 		});
 		csTest.on('data', function(data) {
@@ -39,32 +43,32 @@ function initiateChatscript(config) {
 
 // Sockets events
 io.on('connection', function(browserSocket) {
-	initiateChatscript(chatscriptConfig);
-	console.log('browserSocket opened');
+	// initiateChatscript(chatscriptConfig);
+	// console.log('browserSocket opened');
 	browserSocket.on('send_msg', function(msg) {
 		var chatscriptSocket = net.createConnection(chatscriptConfig, function() {
-			console.log('chatscriptSocket opened');
+			// console.log('chatscriptSocket opened');
 			chatscriptSocket.on('data', function(data) {
-				console.log('chatscriptSocket received data');
+				// console.log('chatscriptSocket received data');
 				io.emit('send_msg', data.toString()); // to browser
 				chatscriptSocket.destroy();
 			});
 			chatscriptSocket.on('end', function() {
-				console.log('chatscriptSocket end');
+				// console.log('chatscriptSocket end');
 			});
 			chatscriptSocket.on('error', function(err) {
-				console.log('chatscriptSocket error: ' + err + ' ' + chatscriptSocket.address()[1]);
+				// console.log('chatscriptSocket error: ' + err + ' ' + chatscriptSocket.address()[1]);
 			});
 			chatscriptSocket.on('close', function() {
-				console.log('chatscriptSocket close');
+				// console.log('chatscriptSocket close');
 			});
 		});
-		console.log('browserSocket send_msg');
+		// console.log('browserSocket send_msg');
 		payload = chatscriptSocket.localAddress + '\x00' + chatscriptBot + '\x00' + msg + '\x00';
 		chatscriptSocket.write(payload);
 	});
 	browserSocket.on('disconnect', function() {
-		console.log('browserSocket disconnect');
+		// console.log('browserSocket disconnect');
 	});
 });
 
